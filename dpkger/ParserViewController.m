@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "GlobalManager.h"
 #import "ParserViewController.h"
+#import "NSString+cat.h"
 #include <spawn.h>
 
 @implementation ParserViewController
@@ -69,13 +70,9 @@
         NSString *debLocation = [topDir stringByAppendingPathComponent:debName];
         
         pid_t pid;
-        char *const args[] = { "dpkg-deb", "-b", (char *)self.stagingDir.UTF8String, (char *)debLocation.UTF8String, NULL };
+        char *const args[] = { "dpkg-deb", "-b", self.stagingDir.charStar, debLocation.charStar, NULL };
         int posixReturn = posix_spawn(&pid, "/usr/bin/dpkg-deb", NULL, NULL, args, NULL);
         waitpid(pid, NULL, 0);
-//        pid_t pid;
-//        const char *args[] = { "dpkg-deb", "-b", self.stagingDir.UTF8String, debLocation.UTF8String, NULL };
-//        int posixReturn = posix_spawn(&pid, "/usr/bin/dpkg-deb", NULL, NULL, (char *const *)args, NULL);
-//        waitpid(pid, NULL, 0);
         printf("Return: %d\nPid: %d\n", posixReturn, pid);
         
         [alert dismissViewControllerAnimated:YES completion:nil];

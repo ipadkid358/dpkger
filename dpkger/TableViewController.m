@@ -8,8 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "GlobalManager.h"
+#import "NSString+cat.h"
 #import "ParserViewController.h"
-#import "DirTableCellView.h"
 
 @interface TableViewController : UITableViewController
 @property (nonatomic, strong) NSString *currentPath;
@@ -42,30 +42,14 @@ NSMutableDictionary<NSString *, NSNumber *> *fileList;
     return self.filesAtPath.count;
 }
 
-- (NSString *)pathAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *dirObject = [self.filesAtPath objectAtIndex:indexPath.row];
-    NSString *fullPath = [self.currentPath stringByAppendingPathComponent:dirObject];
-    return fullPath;
-}
-
-- (BOOL)isDirAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *path = [self pathAtIndexPath:indexPath];
-    BOOL isDir;
-    [NSFileManager.defaultManager fileExistsAtPath:path isDirectory:&isDir];
-    return isDir;
-}
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     NSString *dirObject = [self.filesAtPath objectAtIndex:indexPath.row];
     NSString *fullPath = [self.currentPath stringByAppendingPathComponent:dirObject];
     
-    DirTableCellView *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
     cell.textLabel.text = dirObject;
-    cell.fullPath = fullPath;
-    BOOL isDir;
-    [NSFileManager.defaultManager fileExistsAtPath:fullPath isDirectory:&isDir];
-    cell.isDir = isDir;
-    if (isDir) cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    if (fullPath.isDir) cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     else if (fileList[fullPath]) cell.accessoryType = UITableViewCellAccessoryCheckmark;
     else cell.accessoryType = UITableViewCellAccessoryNone;
     
@@ -73,8 +57,8 @@ NSMutableDictionary<NSString *, NSNumber *> *fileList;
 }
 
 - (NSArray *)tableView:(UITableView *)tableView editActionsForRowAtIndexPath:(NSIndexPath *)indexPath {
-    DirTableCellView *cell = [tableView cellForRowAtIndexPath:indexPath];
-    NSString *fullPath = cell.fullPath;
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSString *fullPath = [self.currentPath stringByAppendingPathComponent:cell.textLabel.text];
     NSString *title = fileList[fullPath] ? @"Remove Entry" : @"Recursive Add";
     
     UITableViewRowAction *swipeButton = [UITableViewRowAction rowActionWithStyle:UITableViewRowActionStyleNormal title:title handler:^(UITableViewRowAction *action, NSIndexPath *indexPath) {
@@ -87,16 +71,15 @@ NSMutableDictionary<NSString *, NSNumber *> *fileList;
 }
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-//    DirTableCellView *cell = [tableView cellForRowAtIndexPath:indexPath];
-//    return cell.isDir;
-    BOOL isDir = [self isDirAtIndexPath:indexPath];
-    return isDir;
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSString *fullPath = [self.currentPath stringByAppendingPathComponent:cell.textLabel.text];
+    return fullPath.isDir;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    DirTableCellView *cell = [tableView cellForRowAtIndexPath:indexPath];
-    NSString *fullPath = cell.fullPath;
-    if (cell.isDir) {
+    UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
+    NSString *fullPath = [self.currentPath stringByAppendingPathComponent:cell.textLabel.text];
+    if (fullPath.isDir) {
         UIStoryboard *storyboard = [UIStoryboard storyboardWithName:@"File" bundle:nil];
         TableViewController *newViewController = [storyboard instantiateViewControllerWithIdentifier:@"File"];
         
