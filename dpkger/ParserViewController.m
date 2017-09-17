@@ -20,7 +20,7 @@
     UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Setting up deb" message:alertMessage preferredStyle:1];
     [self presentViewController:alert animated:YES completion:^{
         NSArray *files = GlobalManager.manager.fileList.allKeys;
-        NSString *appDocs =  NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES)[0];
+        NSString *appDocs = @"/private/var/mobile/Documents/dpkger";
         NSString *hashed = [NSString stringWithFormat:@"%lu", files.hash];
         self.stagingDir = [appDocs stringByAppendingPathComponent:hashed];
         NSFileManager *fileManager = NSFileManager.defaultManager;
@@ -48,11 +48,12 @@
                          "Name: %@\n"
                          "Author: %@\n"
                          "Description: %@\n"
-                         // "Depends: mobilesubstrate\n"
+                         "Depends: %@\n"
                          "Maintainer: ipad_kid <ipadkid358@gmail.com>\n"
                          "Architecture: iphoneos-arm\n"
-                         // "Section: Tweaks\n"
-                         "Version: %@\n", packageID, self.name.text, self.author.text, self.packDesc.text, version];
+                         "Section: %@\n"
+                         "Version: %@\n",
+                         packageID, self.name.text, self.author.text, self.packDesc.text, self.dependencies.text, self.section.text, version];
     [control writeToFile:[debian stringByAppendingPathComponent:@"control"] atomically:YES encoding:NSUTF8StringEncoding error:NULL];
     [self becomeFirstResponder];
     [self.packageID resignFirstResponder];
@@ -61,21 +62,32 @@
     [self.author resignFirstResponder];
     [self.packDesc resignFirstResponder];
     
-    // [UIApplication.sharedApplication openURL:[NSURL URLWithString:[NSString stringWithFormat:@"filza://%@/.", self.stagingDir]]];
-    NSString *alertMessage = @"Please wait. Depending on the amount of files, and their sizes, this may take some time";
-    UIAlertController *alert = [UIAlertController alertControllerWithTitle:@"Creating deb" message:alertMessage preferredStyle:1];
-    [self presentViewController:alert animated:YES completion:^{
-        NSString *debName = [NSString stringWithFormat:@"%@_%@.deb", packageID, version];
-        NSString *topDir = self.stagingDir.stringByDeletingLastPathComponent;
-        NSString *debLocation = [topDir stringByAppendingPathComponent:debName];
-        
+    NSString *debName = [NSString stringWithFormat:@"%@_%@.deb", packageID, version];
+    NSString *topDir = self.stagingDir.stringByDeletingLastPathComponent;
+    NSString *debLocation = [topDir stringByAppendingPathComponent:debName];
+
+    UIAlertController *openAlert = [UIAlertController alertControllerWithTitle:@"Compressing" message:@"Please wait. Your deb is being compressed. Depending on the size of the files you chose, this may take some time. Buttons will not be clickable until this is finished" preferredStyle:1];
+
+    [openAlert addAction:[UIAlertAction actionWithTitle:@"Open in Filza" style:0 handler:^(UIAlertAction *action) {
+        [UIApplication.sharedApplication openURL:[NSURL URLWithString:[NSString stringWithFormat:@"filza://%@", debLocation]]];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }]];
+    
+    [openAlert addAction:[UIAlertAction actionWithTitle:@"Copy path" style:0 handler:^(UIAlertAction *action) {
+        [UIPasteboard.generalPasteboard setString:debLocation];
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }]];
+    
+    [openAlert addAction:[UIAlertAction actionWithTitle:@"Done" style:1 handler:^(UIAlertAction *action) {
+        [self.navigationController popToRootViewControllerAnimated:YES];
+    }]];
+    
+    [self presentViewController:openAlert animated:YES completion:^{
         pid_t pid;
         char *const args[] = { "dpkg-deb", "-b", self.stagingDir.charStar, debLocation.charStar, NULL };
-        int posixReturn = posix_spawn(&pid, "/usr/bin/dpkg-deb", NULL, NULL, args, NULL);
+        posix_spawn(&pid, "/usr/bin/dpkg-deb", NULL, NULL, args, NULL);
         waitpid(pid, NULL, 0);
-        printf("Return: %d\nPid: %d\n", posixReturn, pid);
-        
-        [alert dismissViewControllerAnimated:YES completion:nil];
+        [NSFileManager.defaultManager removeItemAtPath:self.stagingDir error:NULL];
     }];
 }
 @end

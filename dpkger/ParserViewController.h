@@ -13,5 +13,7 @@
 @property (weak, nonatomic) IBOutlet UITextView *packDesc;
 @property (weak, nonatomic) IBOutlet UITextField *name;
 @property (strong, nonatomic) NSString *stagingDir;
+@property (weak, nonatomic) IBOutlet UITextField *dependencies;
+@property (weak, nonatomic) IBOutlet UITextField *section;
 - (void)saveGo;
 @end
