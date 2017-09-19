@@ -10,7 +10,6 @@
 		972966EF1F6D421E00871F0B /* GlobalManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 972966EE1F6D421E00871F0B /* GlobalManager.m */; };
 		972967091F6D7BEE00871F0B /* Parser.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 972967081F6D7BEE00871F0B /* Parser.storyboard */; };
 		9729670B1F6D7C7800871F0B /* ParserViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 9729670A1F6D7C7800871F0B /* ParserViewController.m */; };
-		972967101F6E0DFE00871F0B /* DirTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 9729670F1F6E0DFE00871F0B /* DirTableViewCell.m */; };
 		972967131F6E24B900871F0B /* NSString+cat.m in Sources */ = {isa = PBXBuildFile; fileRef = 972967111F6E24B800871F0B /* NSString+cat.m */; };
 		9733EE5F1F51CB44002ACCEA /* File.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 9733EE5D1F51CB44002ACCEA /* File.storyboard */; };
 		97746BB61F51AD3900D9B524 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 97746BB51F51AD3900D9B524 /* AppDelegate.m */; };
@@ -19,6 +18,8 @@
 		97746BBE1F51AD3900D9B524 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97746BBD1F51AD3900D9B524 /* Assets.xcassets */; };
 		97746BC11F51AD3900D9B524 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97746BBF1F51AD3900D9B524 /* LaunchScreen.storyboard */; };
 		97746BC41F51AD3900D9B524 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 97746BC31F51AD3900D9B524 /* main.m */; };
+		97F82EA41F707ABC00DCF143 /* Loading.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97F82EA31F707ABC00DCF143 /* Loading.storyboard */; };
+		97F82EA71F707AE400DCF143 /* LoadingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 97F82EA61F707AE400DCF143 /* LoadingViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -27,8 +28,6 @@
 		972967081F6D7BEE00871F0B /* Parser.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Parser.storyboard; sourceTree = "<group>"; };
 		9729670A1F6D7C7800871F0B /* ParserViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ParserViewController.m; sourceTree = "<group>"; };
 		9729670C1F6D7D8C00871F0B /* ParserViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ParserViewController.h; sourceTree = "<group>"; };
-		9729670E1F6E0D7C00871F0B /* DirTableCellView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DirTableCellView.h; sourceTree = "<group>"; };
-		9729670F1F6E0DFE00871F0B /* DirTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DirTableViewCell.m; sourceTree = "<group>"; };
 		972967111F6E24B800871F0B /* NSString+cat.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+cat.m"; sourceTree = "<group>"; };
 		972967121F6E24B900871F0B /* NSString+cat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+cat.h"; sourceTree = "<group>"; };
 		9733EE5E1F51CB44002ACCEA /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/File.storyboard; sourceTree = "<group>"; };
@@ -41,6 +40,9 @@
 		97746BC01F51AD3900D9B524 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97746BC21F51AD3900D9B524 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		97746BC31F51AD3900D9B524 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		97F82EA31F707ABC00DCF143 /* Loading.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Loading.storyboard; sourceTree = "<group>"; };
+		97F82EA51F707AD300DCF143 /* LoadingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LoadingViewController.h; sourceTree = "<group>"; };
+		97F82EA61F707AE400DCF143 /* LoadingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = LoadingViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,18 +77,19 @@
 			children = (
 				97746BB41F51AD3900D9B524 /* AppDelegate.h */,
 				97746BB51F51AD3900D9B524 /* AppDelegate.m */,
-				97746BB81F51AD3900D9B524 /* TableViewController.m */,
-				9729670E1F6E0D7C00871F0B /* DirTableCellView.h */,
-				9729670F1F6E0DFE00871F0B /* DirTableViewCell.m */,
-				972967081F6D7BEE00871F0B /* Parser.storyboard */,
-				9729670C1F6D7D8C00871F0B /* ParserViewController.h */,
-				9729670A1F6D7C7800871F0B /* ParserViewController.m */,
 				972966ED1F6D413800871F0B /* GlobalManager.h */,
 				972966EE1F6D421E00871F0B /* GlobalManager.m */,
 				972967121F6E24B900871F0B /* NSString+cat.h */,
 				972967111F6E24B800871F0B /* NSString+cat.m */,
-				97746BBA1F51AD3900D9B524 /* Main.storyboard */,
 				9733EE5D1F51CB44002ACCEA /* File.storyboard */,
+				97746BB81F51AD3900D9B524 /* TableViewController.m */,
+				972967081F6D7BEE00871F0B /* Parser.storyboard */,
+				9729670C1F6D7D8C00871F0B /* ParserViewController.h */,
+				9729670A1F6D7C7800871F0B /* ParserViewController.m */,
+				97F82EA31F707ABC00DCF143 /* Loading.storyboard */,
+				97F82EA51F707AD300DCF143 /* LoadingViewController.h */,
+				97F82EA61F707AE400DCF143 /* LoadingViewController.m */,
+				97746BBA1F51AD3900D9B524 /* Main.storyboard */,
 				97746BBD1F51AD3900D9B524 /* Assets.xcassets */,
 				97746BBF1F51AD3900D9B524 /* LaunchScreen.storyboard */,
 				97746BC21F51AD3900D9B524 /* Info.plist */,
@@ -156,6 +159,7 @@
 				97746BC11F51AD3900D9B524 /* LaunchScreen.storyboard in Resources */,
 				97746BBE1F51AD3900D9B524 /* Assets.xcassets in Resources */,
 				9733EE5F1F51CB44002ACCEA /* File.storyboard in Resources */,
+				97F82EA41F707ABC00DCF143 /* Loading.storyboard in Resources */,
 				97746BBC1F51AD3900D9B524 /* Main.storyboard in Resources */,
 				972967091F6D7BEE00871F0B /* Parser.storyboard in Resources */,
 			);
@@ -171,7 +175,7 @@
 				97746BB91F51AD3900D9B524 /* TableViewController.m in Sources */,
 				9729670B1F6D7C7800871F0B /* ParserViewController.m in Sources */,
 				97746BC41F51AD3900D9B524 /* main.m in Sources */,
-				972967101F6E0DFE00871F0B /* DirTableViewCell.m in Sources */,
+				97F82EA71F707AE400DCF143 /* LoadingViewController.m in Sources */,
 				972966EF1F6D421E00871F0B /* GlobalManager.m in Sources */,
 				97746BB61F51AD3900D9B524 /* AppDelegate.m in Sources */,
 				972967131F6E24B900871F0B /* NSString+cat.m in Sources */,
