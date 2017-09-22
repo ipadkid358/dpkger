@@ -13,37 +13,42 @@
 
 @interface TableViewController : UITableViewController
 @property (nonatomic, strong) NSString *currentPath;
-@property (nonatomic, strong) NSArray *filesAtPath;
 - (void)done;
 @end
 
-@implementation TableViewController
-NSMutableDictionary<NSString *, NSNumber *> *fileList;
+@implementation TableViewController {
+    NSArray *filesAtPath;
+    NSMutableDictionary<NSString *, NSNumber *> *fileList;
+}
+
 - (void)viewDidLoad {
     [super viewDidLoad];
-    [GlobalManager.manager initDict];
+    if (!self.currentPath) {
+        self.currentPath = @"/";
+        [GlobalManager.manager initDict];
+    }
     fileList = GlobalManager.manager.fileList;
-    if (!self.currentPath) self.currentPath = @"/";
-    
-    self.filesAtPath = [NSFileManager.defaultManager contentsOfDirectoryAtPath:self.currentPath error:NULL];
+
+    filesAtPath = [NSFileManager.defaultManager contentsOfDirectoryAtPath:self.currentPath error:NULL];
     self.navigationItem.title = self.currentPath.lastPathComponent;
     UIBarButtonItem *doneButton = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(done)];
     self.navigationItem.rightBarButtonItem = doneButton;
-    if (fileList[self.currentPath] && self.filesAtPath.count) {
-        for (NSString *newPath in self.filesAtPath) [fileList setValue:@1 forKey:[self.currentPath stringByAppendingPathComponent:newPath]];
+    if (fileList[self.currentPath] && filesAtPath.count) {
+        for (NSString *newPath in filesAtPath) [fileList setValue:@1 forKey:[self.currentPath stringByAppendingPathComponent:newPath]];
         [fileList removeObjectForKey:self.currentPath];
     }
 }
+
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
     return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return self.filesAtPath.count;
+    return filesAtPath.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    NSString *dirObject = [self.filesAtPath objectAtIndex:indexPath.row];
+    NSString *dirObject = [filesAtPath objectAtIndex:indexPath.row];
     NSString *fullPath = [self.currentPath stringByAppendingPathComponent:dirObject];
     
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
@@ -86,13 +91,20 @@ NSMutableDictionary<NSString *, NSNumber *> *fileList;
         newViewController.currentPath = fullPath;
         [self.navigationController pushViewController:newViewController animated:YES];
     } else {
-        if (cell.accessoryType == UITableViewCellAccessoryNone) {
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
-            [fileList setValue:@1 forKey:fullPath];
-        } else if (cell.accessoryType == UITableViewCellAccessoryCheckmark) {
-            cell.accessoryType = UITableViewCellAccessoryNone;
-            [fileList removeObjectForKey:fullPath];
-        } else NSLog(@"Bug");
+        switch (cell.accessoryType) {
+            case UITableViewCellAccessoryNone:
+                cell.accessoryType = UITableViewCellAccessoryCheckmark;
+                [fileList setValue:@1 forKey:fullPath];
+                break;
+                
+            case UITableViewCellAccessoryCheckmark:
+                cell.accessoryType = UITableViewCellAccessoryNone;
+                [fileList removeObjectForKey:fullPath];
+                break;
+                
+            default:
+                break;
+        }
     }
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

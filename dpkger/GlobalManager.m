@@ -12,11 +12,11 @@
 @synthesize fileList;
 
 + (instancetype)manager {
-    static GlobalManager *sharedMyManager = nil;
+    static GlobalManager *manager = nil;
     @synchronized(self) {
-        if (sharedMyManager == nil) sharedMyManager = [[self alloc] init];
+        if (manager == nil) manager = [[self alloc] init];
     }
-    return sharedMyManager;
+    return manager;
 }
 
 - (void)initDict {

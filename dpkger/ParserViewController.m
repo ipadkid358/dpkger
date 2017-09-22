@@ -11,7 +11,6 @@
 #import "NSString+cat.h"
 #include <spawn.h>
 
-
 @implementation ParserViewController {
     NSInteger fileIndex;
     NSArray<NSString *> *files;
@@ -21,16 +20,13 @@
     NSString *debLocation;
     
     UIAlertController *openAlert;
-    
-    UIAlertAction *openAction;
-    UIAlertAction *pathAction;
-    UIAlertAction *doneAction;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
     
     UIBarButtonItem *done = [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave target:self action:@selector(saveGo)];
+    done.enabled = NO;
     self.navigationItem.rightBarButtonItem = done;
 }
 
@@ -45,7 +41,13 @@
     fileIndex = 0;
     files = GlobalManager.manager.fileList.allKeys;
     appDocs = @"/private/var/mobile/Documents/dpkger";
+    
+    // Because: https://developer.apple.com/documentation/objectivec/nsuinteger
+#if __LP64__ || (TARGET_OS_EMBEDDED && !TARGET_OS_IPHONE) || TARGET_OS_WIN32 || NS_BUILD_32_LIKE_64
     stagingDir = [appDocs stringByAppendingPathComponent:[NSString stringWithFormat:@"%lu", files.hash]];
+#else
+    stagingDir = [appDocs stringByAppendingPathComponent:[NSString stringWithFormat:@"%d", files.hash]];
+#endif
     fileManager = NSFileManager.defaultManager;
     
     NSString *debian = [stagingDir stringByAppendingPathComponent:@"DEBIAN"];
@@ -68,17 +70,25 @@
     NSString *debName = [NSString stringWithFormat:@"%@_%@.deb", packageID, version];
     debLocation = [appDocs stringByAppendingPathComponent:debName];
     
-    openAlert = [UIAlertController alertControllerWithTitle:@"Creating deb" message:@"Starting..." preferredStyle:1];
+    openAlert = [UIAlertController alertControllerWithTitle:@"Creating deb\n" message:@"Starting..." preferredStyle:1];
     
-    openAction = [UIAlertAction actionWithTitle:@"Open in Filza" style:0 handler:^(UIAlertAction *action) {
+    UIActivityIndicatorView *loadingIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+    [openAlert.view addSubview:loadingIndicator];
+    [loadingIndicator setTranslatesAutoresizingMaskIntoConstraints:NO];
+    NSDictionary *viewsDict = NSDictionaryOfVariableBindings(loadingIndicator);
+    for (NSString *format in @[@"H:|-[loadingIndicator]-|", @"V:|-42-[loadingIndicator]"])
+        [openAlert.view addConstraints:[NSLayoutConstraint constraintsWithVisualFormat:format options:0 metrics:NULL views:viewsDict]];
+    [loadingIndicator startAnimating];
+    
+    UIAlertAction *openAction = [UIAlertAction actionWithTitle:@"Open in Filza" style:0 handler:^(UIAlertAction *action) {
         [UIApplication.sharedApplication openURL:[NSURL URLWithString:[NSString stringWithFormat:@"filza://%@", debLocation]]];
         [self.navigationController popToRootViewControllerAnimated:YES];
     }];
-    pathAction = [UIAlertAction actionWithTitle:@"Copy path" style:0 handler:^(UIAlertAction *action) {
+    UIAlertAction *pathAction = [UIAlertAction actionWithTitle:@"Copy path" style:0 handler:^(UIAlertAction *action) {
         [UIPasteboard.generalPasteboard setString:debLocation];
         [self.navigationController popToRootViewControllerAnimated:YES];
     }];
-    doneAction = [UIAlertAction actionWithTitle:@"Done" style:1 handler:^(UIAlertAction *action) {
+    UIAlertAction *doneAction = [UIAlertAction actionWithTitle:@"Done" style:1 handler:^(UIAlertAction *action) {
         [self.navigationController popToRootViewControllerAnimated:YES];
     }];
     
@@ -92,8 +102,12 @@
         [self copyFiles:^{
             GlobalManager.manager.fileList = nil;
             
+            [loadingIndicator stopAnimating];
             [openAlert setTitle:@"Done!"];
             [openAlert setMessage:[NSString stringWithFormat:@"Debian package create at %@", debLocation]];
+            openAction.enabled = YES;
+            pathAction.enabled = YES;
+            doneAction.enabled = YES;
         }];
     }];
 }
@@ -110,12 +124,7 @@
     if (fileIndex < filesCount) {
         fromPath = files[fileIndex];
         [openAlert setMessage:[NSString stringWithFormat:@"Copying files from %@", fromPath]];
-    } else {
-        [openAlert setMessage:@"Compressing"];
-        openAction.enabled = YES;
-        pathAction.enabled = YES;
-        doneAction.enabled = YES;
-    }
+    } else [openAlert setMessage:@"Compressing"];
     
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         if (fileIndex < filesCount) {
